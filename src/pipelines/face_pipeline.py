@@ -24,37 +24,39 @@ def load_dlib_models():
 
 def get_face_embeddings(image_np):
 
-    # FIX: convert image properly for dlib
-    image_np = np.array(image_np)
+    detector, sp, facerec = load_dlib_models()
 
-    # RGBA -> RGB
+    # Convert safely to numpy uint8
+    image_np = np.array(image_np, dtype=np.uint8)
+
+    # Handle grayscale only
+    if len(image_np.shape) == 2:
+        image_np = np.stack([image_np] * 3, axis=-1)
+
+    # Remove alpha channel if present
     if len(image_np.shape) == 3 and image_np.shape[2] == 4:
-        image_np = cv2.cvtColor(image_np, cv2.COLOR_RGBA2RGB)
+        image_np = image_np[:, :, :3]
 
-    # Gray -> RGB
-    elif len(image_np.shape) == 2:
-        image_np = cv2.cvtColor(image_np, cv2.COLOR_GRAY2RGB)
-
-    # FIX: ensure uint8
-    image_np = image_np.astype(np.uint8)
-
-    # FIX: make contiguous for dlib
+    # Force exact memory layout dlib wants
     image_np = np.ascontiguousarray(image_np)
 
-    detector,sp,facerec = load_dlib_models()
+    print(type(image_np))
+    print(image_np.dtype)
+    print(image_np.shape)
 
     faces = detector(image_np, 1)
 
-    encodings= []
+    encodings = []
 
     for face in faces:
+
         shape = sp(image_np, face)
 
         face_descriptor = facerec.compute_face_descriptor(
             image_np,
             shape,
             1
-        )  #128 embedding 
+        )
 
         encodings.append(np.array(face_descriptor))
 
@@ -142,8 +144,10 @@ def predict_attendence(class_image_np):
         best_match_score = np.linalg.norm(
             student_embedding - encoding
         )
+        print("Predicted ID:", predicted_id)
+        print("Match Score:", best_match_score)
 
-        resemblance_threshold = 0.6
+        resemblance_threshold = 0.8
 
         if best_match_score <= resemblance_threshold:
             detected_student[predicted_id] = True

@@ -39,7 +39,11 @@ def student_screen():
     photo_source = st.camera_input("Position your face in the Center")
     
     if photo_source:
-        img = np.array(Image.open(photo_source).convert("RGB"))
+        image = Image.open(photo_source).convert("RGB")
+
+        img = np.array(image, dtype=np.uint8)
+
+        img = np.ascontiguousarray(img)
 
         with st.spinner("AI is scanning.."):
             detected, all_ids, num_faces = predict_attendence(img)
@@ -52,7 +56,7 @@ def student_screen():
                 if detected:
                     student_id = list(detected.keys())[0]
                     all_students = get_all_students()
-                    student = next((s for s in all_students if s['student_id']==student_id),None)
+                    student = next((s for s in all_students if str(s['student_id']) == str(student_id)),None)
 
                     if student:
                         st.session_state.is_logged = True
@@ -86,7 +90,12 @@ def student_screen():
             if st.button("Create Account",type="primary"):
                 if new_name:
                     with st.spinner('Creating profile..'):
-                        img = np.array(Image.open(photo_source).convert("RGB"))
+                        image = Image.open(photo_source).convert("RGB")
+
+                        img = np.array(image, dtype=np.uint8)
+
+                        img = np.ascontiguousarray(img)
+
                         encodings= get_face_embeddings(img)
                         if encodings:
                             face_emb = encodings[0].tolist()
