@@ -347,6 +347,3 @@ def teacher_screen_register():
             st.session_state.teacher_login_type='login'
 
     footer_dashboard()
-
-
-teacher_screen()
