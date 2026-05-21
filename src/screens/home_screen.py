@@ -24,4 +24,3 @@ def home_screen():
             st.rerun()
     
     footer_home()
-home_screen()
