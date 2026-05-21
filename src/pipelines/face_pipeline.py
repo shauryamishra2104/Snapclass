@@ -109,7 +109,7 @@ def train_classifier():
     return bool(model_data)
 
 
-def predict_attendence(class_image_np):
+def predict_attendance(class_image_np):
 
     encodings = get_face_embeddings(class_image_np)
 
