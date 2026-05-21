@@ -1,5 +1,5 @@
 import dlib
-import cv2
+opencv-python-headless
 import numpy as np 
 import face_recognition_models
 from sklearn.svm import SVC
