@@ -33,8 +33,7 @@ def main():
     if st.session_state.get("join_code"):
 
         if st.session_state.get("login_type") != "student":
-            st.session_state.login_type = "student"
-            st.rerun()
+            st.session_state["login_type"] = "student"
 
         if (
             st.session_state.get("is_logged")
@@ -42,4 +41,12 @@ def main():
         ):
             auto_enroll_dialog(st.session_state["join_code"])
 
-main()
+try:
+    main()
+
+except Exception as e:
+    import traceback
+
+    st.error(f"ERROR: {e}")
+
+    st.code(traceback.format_exc())

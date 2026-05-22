@@ -5,8 +5,11 @@ import time
 
 @st.dialog("Quick Enrollment")
 def auto_enroll_dialog(subject_code):
-    student_id = st.session_state.student_data['student_id']
+    if "student_data" not in st.session_state:
+        st.warning("Please login first to join this subject.")
+        return
 
+    student_id = st.session_state.student_data['student_id']
 
     res = supabase.table('subjects').select('subject_id,name').eq('subject_code',subject_code).execute()
     if not res.data:
