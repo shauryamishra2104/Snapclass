@@ -32,11 +32,14 @@ def main():
 
     if st.session_state.get("join_code"):
 
+        # force student screen
         if st.session_state.get("login_type") != "student":
             st.session_state["login_type"] = "student"
+            st.rerun()
 
+        # wait until student actually logs in
         if (
-            st.session_state.get("is_logged")
+            "student_data" in st.session_state
             and st.session_state.get("user_role") == "student"
         ):
             auto_enroll_dialog(st.session_state["join_code"])
