@@ -13,7 +13,7 @@ setuptools<70.0.0
 
 # database
 
-Supabase
+supabase==2.15.1
 bcrypt   #hashing
 
 segno #for QR code generation
